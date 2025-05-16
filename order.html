@@ -1,56 +1,30 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>내 주문 내역</title>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <link rel="stylesheet" href="css/order.css">
+  <meta charset="UTF-8">
+  <title>주문</title>
 </head>
 <body>
 
-<h2>내 주문 내역</h2>
-<table id="orderTable">
-    <thead>
-        <tr>
-            <th>Order ID</th>
-            <th>Pizza ID</th>
-            <th>Quantity</th>
-            <th>Date</th>
-            <th>Time</th>
-        </tr>
-    </thead>
-    <tbody id="order-table-body">
-    </tbody>
-</table>
+  <form id="orderForm">
+    <div id="ordersContainer">
+      <div class="order">
+        <input type="text" name="pizzaName" placeholder="피자명">
+        <select name="size">
+          <option value="">크기 선택</option>
+          <option value="S">S</option>
+          <option value="M">M</option>
+          <option value="L">L</option>
+        </select>
+        <input type="number" name="quantity" placeholder="수량" min="1" value="1">
+      </div>
+    </div>
+    <button type="button" onclick="addOrder()">추가</button>
+    <button type="submit">주문하기</button>
+  </form>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        axios.post('http://localhost:3000/myorder',{
-            "id": 1
-            //id 값 변수로 추후 변경
-        })
-            .then(response => {
-                const orders = response.data; 
-                const tbody = document.getElementById('order-table-body');
-                tbody.innerHTML = ""; 
-                orders.forEach(order => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${order.order_id}</td>
-                        <td>${order.pizza_id}</td>
-                        <td>${order.quantity}</td>
-                        <td>${order.date}</td>
-                        <td>${order.time}</td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching orders:', error);
-            });
-    });
-
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="js/order.js"></script>
 
 </body>
 </html>
