@@ -17,7 +17,9 @@
         return;
       }
 
-      axios.post("http://localhost:3000/order", { lines: orders })
+      axios.post("http://localhost:3000/order", 
+        { lines: orders },
+        { withCredentials: true })
         .then(response => {
           alert("주문이 완료되었습니다!");
           window.location.href = "home.html";  // 홈으로 이동

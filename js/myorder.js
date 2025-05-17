@@ -1,8 +1,6 @@
  document.addEventListener('DOMContentLoaded', function () {
-        axios.post('http://localhost:3000/myorder',{
-            "id": 1
-            //id 값 변수로 추후 변경
-        })
+        axios.post('http://localhost:3000/myorder',
+            { withCredentials: true })
             .then(response => {
                 const orders = response.data; 
                 const tbody = document.getElementById('order-table-body');

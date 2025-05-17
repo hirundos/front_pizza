@@ -10,7 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('로그인 요청:', { id, pw });
 
         try {
-            const response = await axios.post('http://localhost:3000/login', { id, pw });
+            const response = await axios.post('http://localhost:3000/login', {
+                 id, pw 
+                },{ withCredentials: true});
             console.log('로그인 성공:', response.data);
             window.location.href = 'home.html';
             
