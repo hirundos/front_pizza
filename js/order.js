@@ -1,4 +1,8 @@
-    document.getElementById("orderForm").addEventListener("submit", function(event) {
+document.addEventListener("DOMContentLoaded", () => {
+  let firstPizzaSelect = document.getElementById("pizzaSelect");
+  populatePizzaOptions(firstPizzaSelect);
+
+  document.getElementById("orderForm").addEventListener("submit", function(event) {
       event.preventDefault();
 
       const orders = [];
@@ -30,13 +34,47 @@
         });
     });
 
-    function addOrder() {
-      const container = document.getElementById("ordersContainer");
-      const newOrder = document.createElement("div");
-      newOrder.className = "order";
-      newOrder.innerHTML = `
-        <input type="text" name="pizzaName" placeholder="피자명">
-        <select name="size">
+});
+
+let pizzaList = [];
+  function populatePizzaOptions(selectElement) {
+
+    if (pizzaList.length > 0) {
+      // 이미 피자 목록이 있으면 옵션만 추가
+      pizzaList.forEach(pizza => {
+        const option = document.createElement("option");
+        option.value = pizza.name;
+        option.textContent = pizza.name;
+        selectElement.appendChild(option);
+      });
+    } else {
+      // 처음에만 서버에서 피자 목록 받아오기
+      axios.get("http://localhost:3000/api/pizza",
+        { withCredentials: true })
+        .then(response => {
+          pizzaList = response.data;
+          pizzaList.forEach(pizza => {
+            const option = document.createElement("option");
+            option.value = pizza.name;
+            option.textContent = pizza.name;
+            selectElement.appendChild(option);
+          });
+        })
+        .catch(error => {
+          console.error("피자 목록을 불러오는 데 실패했습니다.", error);
+        });
+    }
+  }
+
+  function addOrder() {
+    const container = document.getElementById("ordersContainer");
+    const newOrder = document.createElement("div");
+    newOrder.className = "order";
+    newOrder.innerHTML = `
+      <select name="pizzaName" class="pizzaSelect">
+        <option value="">피자 선택</option>
+        </select>
+       <select name="size">
           <option value="">크기 선택</option>
           <option value="S">S</option>
           <option value="M">M</option>
@@ -44,5 +82,8 @@
         </select>
         <input type="number" name="quantity" placeholder="수량" min="1" value="1">
       `;
-      container.appendChild(newOrder);
-    }
+    container.appendChild(newOrder);
+  
+  const newPizzaSelect = newOrder.querySelector(".pizzaSelect");
+  populatePizzaOptions(newPizzaSelect);
+  }
