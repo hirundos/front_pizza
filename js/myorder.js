@@ -1,5 +1,5 @@
  document.addEventListener('DOMContentLoaded', function () {
-        axios.post('http://localhost:3000/myorder',
+        axios.post('http://localhost:3000/api/myorder',
             { withCredentials: true })
             .then(response => {
                 const orders = response.data; 

@@ -1,4 +1,4 @@
- axios.get('http://localhost:3000/menu') 
+ axios.get('http://localhost:3000/api/menu') 
       .then(response => {
         const data = response.data;
         const tbody = document.getElementById('pizza-table-body');
