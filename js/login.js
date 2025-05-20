@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('로그인 요청:', { id, pw });
 
         try {
-            const response = await axios.post('http://localhost:3000/api/login', {
+            const response = await axios.post('/api/login', {
                  id, pw 
                 },{ withCredentials: true});
             console.log('로그인 성공:', response.data);

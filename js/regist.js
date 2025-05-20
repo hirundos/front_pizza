@@ -9,7 +9,7 @@
                 const pw = signupForm.querySelector('#signup-password').value;
 
                 try {
-                    const response = await axios.post('http://localhost:3000/api/signup', { id, name, pw });
+                    const response = await axios.post('/api/signup', { id, name, pw });
 
                     console.log('회원가입 성공:', response.data);
                     window.location.href = 'index.html'

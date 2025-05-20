@@ -1,6 +1,6 @@
 async function logout() {
     try {
-        const response = await axios.get('http://localhost:3000/api/logout', 
+        const response = await axios.get('/api/logout', 
             { withCredentials: true });
         if (response.status === 200) {
             alert('로그아웃 되었습니다.');

@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      axios.post("http://localhost:3000/api/order", 
+      axios.post("/api/order", 
         { lines: orders },
         { withCredentials: true })
         .then(response => {
@@ -49,7 +49,7 @@ let pizzaList = [];
       });
     } else {
       // 처음에만 서버에서 피자 목록 받아오기
-      axios.get("http://localhost:3000/api/pizza",
+      axios.get("/api/pizza",
         { withCredentials: true })
         .then(response => {
           pizzaList = response.data;
