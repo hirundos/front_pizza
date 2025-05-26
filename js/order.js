@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      axios.post("/api/order", 
+      axios.post("http://localhost:3000/api/order", 
         { lines: orders },
         { withCredentials: true })
         .then(response => {
