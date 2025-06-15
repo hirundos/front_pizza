@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("orderForm").addEventListener("submit", function(event) {
       event.preventDefault();
 
+      const branchId = document.getElementById("branchSelect").value;
+
       const orders = [];
       document.querySelectorAll(".order").forEach(order => {
         const pizzaName = order.querySelector("[name='pizzaName']").value;
@@ -22,7 +24,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       axios.post("/api/order", 
-        { lines: orders },
+        {
+          branchId, 
+          lines: orders 
+        },
         { withCredentials: true })
         .then(response => {
           alert("주문이 완료되었습니다!");
@@ -37,8 +42,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 let pizzaList = [];
-  function populatePizzaOptions(selectElement) {
 
+  function populatePizzaOptions(selectElement) {
     if (pizzaList.length > 0) {
       // 이미 피자 목록이 있으면 옵션만 추가
       pizzaList.forEach(pizza => {
@@ -58,7 +63,7 @@ let pizzaList = [];
             option.value = pizza.name;
             option.textContent = pizza.name;
             selectElement.appendChild(option);
-          });
+          });          
         })
         .catch(error => {
           console.error("피자 목록을 불러오는 데 실패했습니다.", error);
@@ -87,3 +92,19 @@ let pizzaList = [];
   const newPizzaSelect = newOrder.querySelector(".pizzaSelect");
   populatePizzaOptions(newPizzaSelect);
   }
+
+function showPizzaImage(selectElement) {
+  const selectedValue = selectElement.value;
+  const pizza = pizzaList.find(p => p.name === selectedValue);
+  const img = selectElement.parentElement.querySelector('.pizzaImage');
+
+  if (pizza && pizza.img_url) {
+    img.src = './'+ pizza.img_url;
+    img.style.display = 'inline-block';
+  } else {
+    img.src = '';
+    img.style.display = 'none';
+  }
+}
+
+

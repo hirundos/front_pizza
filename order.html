@@ -7,12 +7,24 @@
 <body>
 
   <form id="orderForm">
+    <!-- 지점 선택 -->
+    <label for="branchSelect">지점 선택:</label>
+    <select id="branchSelect" name="branchId" required>
+      <option value="">지점을 선택하세요</option>
+      <option value="1">미국 오아이오점</option>
+      <option value="2">일본 오사카점</option>
+      <option value="3">한국 서울점</option>
+      <option value="4">영국 런던점</option>
+    </select>
+    <!-- todo 지점 테이블 분리 및 api로 지점 값 받아와서 선택하도록 수정 -->
+
+  <form id="orderForm">
     <div id="ordersContainer">
       <div class="order">
-        <select id="pizzaSelect" name="pizzaName">
+        <img class="pizzaImage" src="" alt="피자 이미지" style="width:100px; height:auto; display:none; margin-left:10px; vertical-align:middle;" />
+        <select id="pizzaSelect" name="pizzaName" onchange="showPizzaImage(this)">
           <option value="">피자 선택</option>
         </select>
-        
         <select name="size">
           <option value="">크기 선택</option>
           <option value="S">S</option>
