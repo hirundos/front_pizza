@@ -76,6 +76,7 @@ let pizzaList = [];
     const newOrder = document.createElement("div");
     newOrder.className = "order";
     newOrder.innerHTML = `
+    <img class="pizzaImage" src="" alt="피자 이미지" style="width:100px; height:auto; display:none; margin-left:10px; vertical-align:middle;" />
       <select name="pizzaName" class="pizzaSelect">
         <option value="">피자 선택</option>
         </select>
@@ -91,6 +92,11 @@ let pizzaList = [];
   
   const newPizzaSelect = newOrder.querySelector(".pizzaSelect");
   populatePizzaOptions(newPizzaSelect);
+
+   // 이벤트 리스너 바인딩
+  newPizzaSelect.addEventListener("change", function () {
+    showPizzaImage(this);
+  });
   }
 
 function showPizzaImage(selectElement) {
