@@ -10,10 +10,15 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('로그인 요청:', { id, pw });
 
         try {
-            const response = await axios.post('/api/login', {
+            const response = await axios.post('/api/login/', {
                  id, pw 
-                },{ withCredentials: true});
+                });
             console.log('로그인 성공:', response.data);
+
+             // JWT가 응답에 있다면 저장 (예: response.data.token)
+            if (response.data.token) {
+                localStorage.setItem('jwt_token', response.data.token);
+            }
             window.location.href = 'home.html';
             
         } catch (error) {

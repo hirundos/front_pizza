@@ -1,8 +1,15 @@
 async function logout() {
+    const token = localStorage.getItem('jwt_token');
     try {
-        const response = await axios.get('/api/logout', 
-            { withCredentials: true });
+        const response = await axios.get('/api/login/logout/', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
         if (response.status === 200) {
+            // JWT 토큰 삭제
+            localStorage.removeItem('jwt_token');
+            
             alert('로그아웃 되었습니다.');
             window.location.href = '/index.html';
         }

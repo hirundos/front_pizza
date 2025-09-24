@@ -11,12 +11,8 @@
     <label for="branchSelect">지점 선택:</label>
     <select id="branchSelect" name="branchId" required>
       <option value="">지점을 선택하세요</option>
-      <option value="1">미국 오아이오점</option>
-      <option value="2">일본 오사카점</option>
-      <option value="3">한국 서울점</option>
-      <option value="4">영국 런던점</option>
     </select>
-    <!-- todo 지점 테이블 분리 및 api로 지점 값 받아와서 선택하도록 수정 -->
+    <!-- 지점 목록은 API를 통해 동적으로 로드 -->
 
   <form id="orderForm">
     <div id="ordersContainer">
@@ -39,6 +35,10 @@
   </form>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="js/order.js"></script>
+
+</body>
+</html>
     <script src="js/order.js"></script>
 
 </body>
