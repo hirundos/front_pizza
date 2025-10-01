@@ -1,6 +1,7 @@
-FROM nginx:1.25.1-alpine3.17-slim
-RUN rm -rf /etc/nginx/sites-enabled/default
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY dist/ /usr/share/nginx/html/
-STOPSIGNAL SIGTERM
+FROM nginx:bookworm
+
+COPY . /usr/share/nginx/front
+COPY .docker/nginx/default /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

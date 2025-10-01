@@ -1,0 +1,12 @@
+server {
+    listen 80 default_server;
+    server_name _;
+
+    # 정적 프론트엔드 경로
+    root /usr/share/nginx/front;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
