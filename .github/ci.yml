@@ -1,4 +1,4 @@
-name: Build Apache Web Image
+name: Build Nginx Web
 
 on:
   push:
