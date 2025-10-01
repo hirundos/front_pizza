@@ -1,0 +1,105 @@
+name: Build Apache Web Image
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install yq
+      run: |
+        sudo wget -O /usr/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+        sudo chmod +x /usr/bin/yq
+
+    - name: Checkout source
+      uses: actions/checkout@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Decode GCP service account key
+      run: |
+        echo "${{ secrets.GCP_SA_KEY }}" | base64 -d > key.json || {
+          echo "❌ [ERROR] GCP 서비스 계정 키 복호화 실패"; exit 1;
+        }
+
+    - name: Install gcloud CLI
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true
+
+    - name: Login to GCR
+      run: |
+        gcloud auth activate-service-account --key-file=key.json || {
+          echo "❌ [ERROR] GCP 인증 실패"; exit 1;
+        }
+        gcloud auth configure-docker asia-northeast3-docker.pkg.dev || {
+          echo "❌ [ERROR] GCR Docker 로그인 실패"; exit 1;
+        }
+
+    - name: Get latest GCR image tag
+      id: get_latest
+      run: |
+        DATE=$(date +%Y%m%d)
+        set -o pipefail
+
+        echo "ℹ️ 최신 태그 조회 중..."
+        LTAG=$(gcloud artifacts docker tags list "asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/ay-repo/web" \
+          --format="value(tag)" --sort-by="~tag" --limit=1 ) || true
+
+        if [[ -z "$LTAG" ]]; then
+          echo "⚠️ [WARNING] 기존 태그 없음, 기본값 사용"
+          TAG="20250925-1.0.0"
+        else
+          echo "✅ Latest Tag Found: $LTAG"
+          TAG="$LTAG"
+        fi
+
+        # 날짜 제거 (예: 20250925-1.0.2 → 1.0.2)
+        SEMVER=$(echo "$TAG" | sed -E 's/^[0-9]+-//')
+
+        IFS='.' read -r MAJOR MINOR PATCH <<< "$SEMVER"
+        MAJOR=${MAJOR:-0}
+        MINOR=${MINOR:-0}
+        PATCH=${PATCH:-0}
+
+        NEXT_PATCH=$((PATCH + 1))
+        NEW_SEMVER="${MAJOR}.${MINOR}.${NEXT_PATCH}"
+        IMAGE_TAG="${DATE}-${NEW_SEMVER}"
+
+        echo "🆕 New Image Tag: $IMAGE_TAG"
+        echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+    - name: Build and Push Docker Image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/ay-repo/web:${{ env.IMAGE_TAG }}
+
+    - name: Update image tag in CD repo
+      run: |
+        set -e
+        echo "ℹ️ CD repo 업데이트 시작..."
+
+        git clone https://x-access-token:${{ secrets.CD_REPO_TOKEN }}@github.com/hirundos/pizza_cd.git || {
+          echo "❌ [ERROR] Git clone 실패"; exit 1;
+        }
+
+        cd pizza_cd/web
+        export WEB_TAG="${{ env.IMAGE_TAG }}"
+        yq e '.web.image.tag = strenv(WEB_TAG)' -i values.yaml
+
+        git config user.name "CI Bot"
+        git config user.email "ci-bot@example.com"
+        git commit -am "Update image tag to web=${WEB_TAG}" || echo "ℹ️ No changes to commit"
+        git push || {
+          echo "❌ [ERROR] Git push 실패"; exit 1;
+        }
+
+        echo "✅ CD repo 업데이트 완료"
