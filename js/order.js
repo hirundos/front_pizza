@@ -81,7 +81,6 @@ function handleOrderSubmit(event) {
     return;
   }
 
-  // 요청 데이터 확인 (디버깅용)
   console.log("Sending order:", { branchId, lines: orders });
 
   axios.post("/api/order/", 
@@ -168,7 +167,7 @@ function addOrder() {
   container.appendChild(newOrder);
 
   const newPizzaSelect = newOrder.querySelector(".pizzaSelect");
-  populatePizzaOptions(newPizzaSelect);
+  fillPizzaOptions(newPizzaSelect);
 
   // 이벤트 리스너 바인딩
   newPizzaSelect.addEventListener("change", function() {
